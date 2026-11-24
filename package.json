@@ -27,6 +27,8 @@
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
-        "@walletconnect/ethereum-provider": "^2.26.0"
+        "@walletconnect/ethereum-provider": "^2.26.0",
+        "react-markdown": "^9.1.0",
+        "remark-gfm": "^4.0.1"
     }
 }
