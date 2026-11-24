@@ -44,6 +44,8 @@
         <title inertia>{{ $isTress ? 'Tress Column' : config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts: self-hosted (see @font-face in resources/css/app.css) -->
+        <!-- Preconnect for the embedded visuals, which load their typefaces from Bunny Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 
         <!-- Scripts -->
         @routes
