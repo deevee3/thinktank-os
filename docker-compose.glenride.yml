@@ -1,0 +1,41 @@
+# Glenride-only ThinkTank OS stack (split deploy, Nov 23 2026).
+# Serves glenride.com ONLY. The live stack (project thinktank-os) keeps
+# serving dvaughnhouse.org untouched on :8080.
+# Shares the live postgres + redis over the thinktank-os_default network,
+# and mounts the live attestation record dir read-only so the registry
+# on glenride.com stays current. No horizon worker, no cloudflared,
+# no db/cache of its own. No RedirectLegacyHost anywhere in this stack.
+services:
+  app-glenride:
+    image: thinktank-os-app:latest
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+      - /home/housedv/projects/dvaughnhouse/thinktank-os/storage/app/private/digest-attestation:/var/www/html/storage/app/private/digest-attestation:ro
+    env_file:
+      - .env
+    secrets:
+      - attestation_signing_key_enc
+      - attestation_kek
+
+  web-glenride:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx-glenride.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app-glenride
+
+networks:
+  default:
+    name: thinktank-os_default
+    external: true
+
+secrets:
+  attestation_signing_key_enc:
+    file: /home/housedv/.config/thinktank-os/secrets/attestation-signing-key.enc
+  attestation_kek:
+    file: /home/housedv/.config/thinktank-os/secrets/attestation-kek.key
